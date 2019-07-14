@@ -26,7 +26,7 @@ def FindTanka(text,neologd=False):
             curpos = n
             tanka = ""
             tankalen = 0
-            while sound<=31 and curpos<l:
+            while sound<=32 and curpos<l:
                 w = sentence[curpos]
                 #句(57577)の始まりが助詞や助動詞でないかどうか
                 if sound in TankaPoint:
@@ -38,10 +38,11 @@ def FindTanka(text,neologd=False):
                     if sound ==TankaPoint[tankalen]:
                         tankalen+=1
                     if tankalen >= 5:
-                        if w["Hinshi"] in ("名詞","動詞","形容詞","連体詞","副詞") or curpos==l-1 or\
-                        (curpos<l-1 and sentence[curpos+1]["Hinshi"] in ("名詞","動詞","形容詞","連体詞","副詞")):
+                        if w["Hinshi"] in JIRITSUGO or (curpos<l-1 and sentence[curpos+1]["Hinshi"] in JIRITSUGO:)
                             Tankas.append(tanka)
                             break
+                        else:
+                            tankalen -= 1
                 curpos+=1
     return(Tankas)
 
