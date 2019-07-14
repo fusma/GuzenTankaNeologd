@@ -148,6 +148,69 @@ if __name__ == "__main__":
 
 コードは長いが、要するに単語をひとつずつ数えて短歌になっているかどうか調べている。
 これで偶然短歌をぼくも作れるはずだ！
-とりあえずこのプログラムに「銀河鉄道の夜」をぶちこんだ結果がこれ。
+とりあえずこのプログラムに青空文庫から「人間失格」をぶちこんだ結果がこれ。
+(pic)
+「政党の有名人がこの町に演説に来て自分は下男」
+「画家たちは人間という化け物に傷めつけられおびやかされた」あたりは短歌として成り立っていそうだが、その他はどうもしっくりこない。
+俳句の終わり際が不自然なので、「体言止め」または「文節の切れ目」で終わっていれば良いはず。
 
->
+というわけで魔改造した。
+<details><summary>明らかに処理に無駄が多い気はするが…</summary>
+
+```Python
+from split_node import ParseNode
+import MeCab
+import itertools
+import sys
+
+JIRITSUGO = (
+"動詞","形容詞","接続詞",
+"名詞","副詞","連体詞","感動詞")#自立後のリスト
+FUZOKUGO = ("助詞","助動詞")
+
+def FindTanka(text,neologd=False):
+    """
+    テキストをぶちこむと短歌のリストを返してくれる風流な関数。
+    """
+    Nodes = ParseNode(text,neologd=neologd)
+    TankaPoint = (5,12,17,24,31,32)
+    Tankas = []
+    for sentence in Nodes:
+        l = len(sentence)
+        for n,StartWord in enumerate(sentence):
+            if StartWord["Yomi"] =="*" or\
+            StartWord["Hinshi"] not in JIRITSUGO:continue
+            sound = 0
+            curpos = n
+            tanka = ""
+            tankalen = 0
+            while sound<=32 and curpos<l:
+                w = sentence[curpos]
+                #句(57577)の始まりが助詞や助動詞でないかどうか
+                if sound in TankaPoint and tankalen<=4:
+                    if w["Hinshi"] not in ("名詞","動詞","連体詞","副詞","形容詞"):
+                        break    
+                if w["Yomi"]!="*":
+                    tanka += w["Text"]
+                    sound += w["Length"]
+                    if sound ==TankaPoint[tankalen]:
+                        tankalen+=1
+                    if tankalen == 5:#短歌が完成した場合
+                        if (w["Hinshi"] in JIRITSUGO and "連用" not in w["Katsuyo"])  or (curpos<l-1 and sentence[curpos+1]["Hinshi"] in JIRITSUGO):
+                            Tankas.append(tanka)
+                            break
+                    if tankalen == 6:#31文字でうまく終わらなかった場合の安全策
+                        Tankas.append(tanka)
+                        break
+                curpos+=1
+                
+    return(Tankas)
+
+if __name__ == "__main__":
+    print(FindTanka(aozora(input("url:")),neologd = True))
+```
+
+</details>
+
+用言の場合は連用形で終わっているものと、直後にまだ助詞/助動詞が続くものを結果から外した。と同時に、字余りの「57578」を許可した。すべての字余りのパターンを許容するとコーディングが地獄すぎるので、違和感が少なそうな最後の字余りだけ対応した。
+その結果がこちら。

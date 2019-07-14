@@ -23,7 +23,7 @@ def ParseNode(text,neologd = False):
             word["Yomi"] = detail[8]
             word["Length"] = len(detail[8])
         else:
-            word["Yomi"] = "*"
+            word["Yomi"] = "*"r
             word["Length"] = 0
 
         #後処理
@@ -37,8 +37,6 @@ def ParseNode(text,neologd = False):
         elif word["Yomi"] == "。":
             Result.append(Sentence)
             Sentence = []
-        elif word["Hinshi"] == "記号":
-            word["Length"]
         else:
             Sentence.append(word)
             

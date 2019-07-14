@@ -1,8 +1,8 @@
 from bs4 import BeautifulSoup
 import requests
+import re
 
 def aozora(url):
-    text = ""
     aozorahtml = requests.get(url)
     aozorahtml.encoding = aozorahtml.apparent_encoding
     soup = BeautifulSoup(aozorahtml.text,"html.parser")
@@ -16,5 +16,6 @@ def aozora(url):
         for r2 in ruby2:
             r2.extract()
     return(honbun.text)
+
 if __name__ == "__main__":
     print(aozora(input()))
