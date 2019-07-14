@@ -18,7 +18,7 @@ def ParseNode(text,neologd = False):
         word["Text"] = node.surface
         detail = node.feature.split(",")
         word["Hinshi"] = detail[0]
-
+        word["Katsuyo"] = detail[5]
         if len(detail)>=9:
             word["Yomi"] = detail[8]
             word["Length"] = len(detail[8])
