@@ -21,7 +21,7 @@ def FindTanka(text,neologd=False):
         l = len(sentence)
         for n,StartWord in enumerate(sentence):
             if StartWord["Yomi"] =="*" or\
-            StartWord["Hinshi"] not in ("名詞","動詞","連体詞","副詞"):continue
+            StartWord["Hinshi"] not in JIRITSUGO:continue
             sound = 0
             curpos = n
             tanka = ""
@@ -29,21 +29,23 @@ def FindTanka(text,neologd=False):
             while sound<=32 and curpos<l:
                 w = sentence[curpos]
                 #句(57577)の始まりが助詞や助動詞でないかどうか
-                if sound in TankaPoint:
+                if sound in TankaPoint and tankalen<=4:
                     if w["Hinshi"] not in ("名詞","動詞","連体詞","副詞","形容詞"):
-                        break       
+                        break    
                 if w["Yomi"]!="*":
                     tanka += w["Text"]
                     sound += w["Length"]
                     if sound ==TankaPoint[tankalen]:
                         tankalen+=1
-                    if tankalen >= 5:
-                        if w["Hinshi"] in JIRITSUGO or (curpos<l-1 and sentence[curpos+1]["Hinshi"] in JIRITSUGO:)
+                    if tankalen == 5:#短歌が完成した場合
+                        if (w["Hinshi"] in JIRITSUGO and "連用" not in w["Katsuyo"])  or (curpos<l-1 and sentence[curpos+1]["Hinshi"] in JIRITSUGO):
                             Tankas.append(tanka)
                             break
-                        else:
-                            tankalen -= 1
+                    if tankalen == 6:#31文字でうまく終わらなかった場合の安全策
+                        Tankas.append(tanka)
+                        break
                 curpos+=1
+                
     return(Tankas)
 
 if __name__ == "__main__":
