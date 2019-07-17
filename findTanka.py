@@ -60,5 +60,5 @@ def FindTanka(text,neologd=False):
     return(Tankas)
 
 if __name__ == "__main__":
-    print(FindTanka(wikipedia(input("url:")),neologd = True))
+    print(FindTanka(wikipedia(input()),neologd=True))
     #print(FindTanka(readlines()))

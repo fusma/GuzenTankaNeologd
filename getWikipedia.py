@@ -2,7 +2,11 @@ from bs4 import BeautifulSoup
 import requests
 import re
 
-def wikipedia(url):
+def wikipedia(article,isurl=False):
+    if isurl:
+        url = article
+    else:
+        url = "https://ja.wikipedia.org/wiki/"+article
     text = ""
     wikihtml = requests.get(url)
     wikihtml.encoding = wikihtml.apparent_encoding

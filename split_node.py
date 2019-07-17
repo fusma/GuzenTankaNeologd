@@ -23,13 +23,12 @@ def ParseNode(text,neologd = False):
             word["Yomi"] = detail[8]
             word["Length"] = len(detail[8])
         else:
-            word["Yomi"] = "*"r
+            word["Yomi"] = "*"
             word["Length"] = 0
 
         #後処理
         shoji = sum([word["Yomi"].count(t) for t in ("ァィゥェォャュョ")])
         word["Length"] -= shoji
-
 
         if detail[0] == "BOS/EOS":
             if Sentence:
